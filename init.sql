@@ -1,0 +1,3 @@
+CREATE DATABASE gadgethome;
+CREATE USER tshiamo WITH PASSWORD 'T5h14m0';
+GRANT ALL ON DATABASE gadgethome TO tshiamo;
