@@ -12,6 +12,10 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 
+import za.co.wethinkcode.gadgethomeserver.models.database.Picture;
+import za.co.wethinkcode.gadgethomeserver.models.database.Post;
+import za.co.wethinkcode.gadgethomeserver.models.database.User;
+
 class PictureTest {
     @Test
     void testConstructor() throws IOException {

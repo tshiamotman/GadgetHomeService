@@ -1,7 +1,8 @@
 package za.co.wethinkcode.gadgethomeserver.services;
 
 import org.springframework.stereotype.Service;
-import za.co.wethinkcode.gadgethomeserver.models.Post;
+
+import za.co.wethinkcode.gadgethomeserver.models.database.Post;
 import za.co.wethinkcode.gadgethomeserver.repository.PostRepository;
 
 import java.util.List;

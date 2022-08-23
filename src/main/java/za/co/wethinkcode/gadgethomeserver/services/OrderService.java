@@ -1,11 +1,9 @@
 package za.co.wethinkcode.gadgethomeserver.services;
 
 import org.springframework.stereotype.Service;
-import za.co.wethinkcode.gadgethomeserver.models.User;
-import za.co.wethinkcode.gadgethomeserver.models.Order;
-import za.co.wethinkcode.gadgethomeserver.repository.OrderRepository;
 
-import java.util.List;
+import za.co.wethinkcode.gadgethomeserver.models.database.Order;
+import za.co.wethinkcode.gadgethomeserver.repository.OrderRepository;
 
 @Service
 public class OrderService {

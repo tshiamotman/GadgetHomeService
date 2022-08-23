@@ -1,4 +1,4 @@
-package za.co.wethinkcode.gadgethomeserver.models;
+package za.co.wethinkcode.gadgethomeserver.models.database;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

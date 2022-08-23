@@ -2,8 +2,9 @@ package za.co.wethinkcode.gadgethomeserver.services;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import za.co.wethinkcode.gadgethomeserver.models.Picture;
-import za.co.wethinkcode.gadgethomeserver.models.Post;
+
+import za.co.wethinkcode.gadgethomeserver.models.database.Picture;
+import za.co.wethinkcode.gadgethomeserver.models.database.Post;
 import za.co.wethinkcode.gadgethomeserver.repository.PictureRepository;
 
 import java.io.IOException;

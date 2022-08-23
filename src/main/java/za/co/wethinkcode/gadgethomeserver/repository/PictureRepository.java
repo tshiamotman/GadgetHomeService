@@ -1,8 +1,9 @@
 package za.co.wethinkcode.gadgethomeserver.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import za.co.wethinkcode.gadgethomeserver.models.Picture;
-import za.co.wethinkcode.gadgethomeserver.models.Post;
+
+import za.co.wethinkcode.gadgethomeserver.models.database.Picture;
+import za.co.wethinkcode.gadgethomeserver.models.database.Post;
 
 import java.util.List;
 

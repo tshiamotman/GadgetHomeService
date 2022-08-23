@@ -10,8 +10,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import za.co.wethinkcode.gadgethomeserver.models.Picture;
-import za.co.wethinkcode.gadgethomeserver.models.Post;
+
+import za.co.wethinkcode.gadgethomeserver.models.database.Picture;
+import za.co.wethinkcode.gadgethomeserver.models.database.Post;
 import za.co.wethinkcode.gadgethomeserver.services.PictureService;
 import za.co.wethinkcode.gadgethomeserver.services.PostsService;
 

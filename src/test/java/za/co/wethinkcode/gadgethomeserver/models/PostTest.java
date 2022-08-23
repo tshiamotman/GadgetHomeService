@@ -8,6 +8,9 @@ import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
 
+import za.co.wethinkcode.gadgethomeserver.models.database.Post;
+import za.co.wethinkcode.gadgethomeserver.models.database.User;
+
 class PostTest {
 
     User user = new User();

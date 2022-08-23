@@ -6,8 +6,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.server.ResponseStatusException;
-import za.co.wethinkcode.gadgethomeserver.models.Post;
-import za.co.wethinkcode.gadgethomeserver.models.User;
+
+import za.co.wethinkcode.gadgethomeserver.models.database.Post;
+import za.co.wethinkcode.gadgethomeserver.models.database.User;
 import za.co.wethinkcode.gadgethomeserver.repository.UserRepository;
 import za.co.wethinkcode.gadgethomeserver.services.PostsService;
 

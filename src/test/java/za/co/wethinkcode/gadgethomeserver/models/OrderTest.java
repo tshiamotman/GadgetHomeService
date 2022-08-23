@@ -10,6 +10,10 @@ import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
 
+import za.co.wethinkcode.gadgethomeserver.models.database.Order;
+import za.co.wethinkcode.gadgethomeserver.models.database.Post;
+import za.co.wethinkcode.gadgethomeserver.models.database.User;
+
 class OrderTest {
     @Test
     void testConstructor() {

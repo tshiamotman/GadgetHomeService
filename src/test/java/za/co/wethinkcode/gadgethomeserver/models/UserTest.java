@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
+import za.co.wethinkcode.gadgethomeserver.models.database.User;
+
 class UserTest {
     @Test
     void testConstructor() {

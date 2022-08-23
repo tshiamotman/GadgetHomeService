@@ -1,4 +1,4 @@
-package za.co.wethinkcode.gadgethomeserver.models;
+package za.co.wethinkcode.gadgethomeserver.models.database;
 
 import org.hibernate.annotations.Type;
 import org.springframework.web.multipart.MultipartFile;
