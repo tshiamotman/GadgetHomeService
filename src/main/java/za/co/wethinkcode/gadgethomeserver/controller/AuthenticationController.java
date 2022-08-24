@@ -1,6 +1,8 @@
 package za.co.wethinkcode.gadgethomeserver.controller;
 
 
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.ResponseEntity;
@@ -9,17 +11,19 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import za.co.wethinkcode.gadgethomeserver.models.database.RefreshToken;
 import za.co.wethinkcode.gadgethomeserver.models.domain.AuthenticationResponseDto;
+import za.co.wethinkcode.gadgethomeserver.models.domain.RefreshToken;
 import za.co.wethinkcode.gadgethomeserver.models.domain.UserDto;
 import za.co.wethinkcode.gadgethomeserver.services.RefreshTokenService;
 import za.co.wethinkcode.gadgethomeserver.services.UserDetailsService;
@@ -130,5 +134,24 @@ public class AuthenticationController {
             new AuthenticationResponseDto(true, "Invalid Credentials")
                 .getResponseBody()
         );
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader("Authorization") String tokenString) {
+        String token = tokenString.substring(7);
+        
+        this.token.invalidateToken(token);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication.isAuthenticated()) {
+            String username = authentication.getName();
+            this.refreshTokenService.deleteRefreshToken(username);
+            return ResponseEntity.ok(Map.of(
+                "message", "User logged out",
+                "user", username
+            ));
+        }
+
+        return null;
     }
 }

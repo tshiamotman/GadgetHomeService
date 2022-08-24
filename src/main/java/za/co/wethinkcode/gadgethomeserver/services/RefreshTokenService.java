@@ -4,8 +4,8 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import za.co.wethinkcode.gadgethomeserver.models.database.RefreshToken;
 import za.co.wethinkcode.gadgethomeserver.models.database.User;
+import za.co.wethinkcode.gadgethomeserver.models.domain.RefreshToken;
 import za.co.wethinkcode.gadgethomeserver.repository.RefreshTokenRepository;
 import za.co.wethinkcode.gadgethomeserver.repository.UserRepository;
 
@@ -39,8 +39,8 @@ public class RefreshTokenService {
         return false;
     }
 
-    public void deleteRefreshToken(String token, String username) {
-        Optional<RefreshToken> refreshToken = this.refreshTokenRepo.findById(token);
+    public void deleteRefreshToken(String username) {
+        Optional<RefreshToken> refreshToken = this.refreshTokenRepo.findById(username);
         
         if(refreshToken.isPresent() && username.equals(refreshToken.get().getUser())) 
             this.refreshTokenRepo.delete(refreshToken.get());
