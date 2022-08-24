@@ -11,13 +11,17 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import za.co.wethinkcode.gadgethomeserver.models.domain.AuthenticationDto;
+import za.co.wethinkcode.gadgethomeserver.models.database.RefreshToken;
+import za.co.wethinkcode.gadgethomeserver.models.domain.AuthenticationResponseDto;
 import za.co.wethinkcode.gadgethomeserver.models.domain.UserDto;
+import za.co.wethinkcode.gadgethomeserver.services.RefreshTokenService;
 import za.co.wethinkcode.gadgethomeserver.services.UserDetailsService;
 import za.co.wethinkcode.gadgethomeserver.util.SessionToken;
 
@@ -30,12 +34,14 @@ public class AuthenticationController {
 
     final AuthenticationManager authenticationManager;
     final UserDetailsService userDetailsService;
+    final RefreshTokenService refreshTokenService;
     final SessionToken token;
 
-    public AuthenticationController(AuthenticationManager authenticationManager,
+    public AuthenticationController(AuthenticationManager authenticationManager, RefreshTokenService refreshTokenService,
                                     UserDetailsService userDetailsService, SessionToken token) {
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
+        this.refreshTokenService = refreshTokenService;
         this.token = token;
     }
 
@@ -48,35 +54,36 @@ public class AuthenticationController {
                 logger.info("Logged In");
                 UserDetails userDetails = userDetailsService.loadUserByUsername(userLogin.getUserName());
                 String token = this.token.generateToken(userDetails);
+                RefreshToken refreshToken = this.refreshTokenService.createRefreshToken(userLogin.getUserName());
                 return ResponseEntity.ok(
-                    new AuthenticationDto(false, "Logged In")
+                    new AuthenticationResponseDto(false, "Logged In")
                         .setToken(token)
                         .setUser(userLogin.getUserName())
-                        .setRefreshToken("refreshToken")
-                        .build()
+                        .setRefreshToken(refreshToken.getToken())
+                        .getResponseBody()
                     );
             } else {
                 return ResponseEntity.status(401).body(
-                    new AuthenticationDto(true, "Invalid Credentials")
-                        .build()
+                    new AuthenticationResponseDto(true, "Invalid Credentials")
+                        .getResponseBody()
                     );
             }
         } catch (DisabledException e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body(
-                new AuthenticationDto(true, "User is disabled")
-                    .build()
+                new AuthenticationResponseDto(true, "User is disabled")
+                    .getResponseBody()
                 );
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(401).body(
-                new AuthenticationDto(true, "Invalid Credentials")
-                    .build()
+                new AuthenticationResponseDto(true, "Invalid Credentials")
+                    .getResponseBody()
                 );
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body(
-                new AuthenticationDto(true, e.getMessage())
-                    .build()
+                new AuthenticationResponseDto(true, e.getMessage())
+                    .getResponseBody()
                 );
         }
     }
@@ -86,20 +93,42 @@ public class AuthenticationController {
         try {
             UserDetails userDetails = userDetailsService.createUserDetails(registerUser);
             String token = this.token.generateToken(userDetails);
+            RefreshToken refreshToken = this.refreshTokenService.createRefreshToken(registerUser.getUserName());
             return ResponseEntity.ok(
-                    new AuthenticationDto(false, "Logged In")
+                    new AuthenticationResponseDto(false, "Logged In")
                         .setToken(token)
                         .setUser(registerUser.getUserName())
-                        .setRefreshToken("refreshToken")
-                        .build()
+                        .setRefreshToken(refreshToken.getToken())
+                        .getResponseBody()
                     );
 
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(409).body(
-                new AuthenticationDto(true, e.getMessage())
-                    .build()
+                new AuthenticationResponseDto(true, e.getMessage())
+                    .getResponseBody()
                 );
         }
+    }
+
+    @GetMapping("/refresh/{refreshToken}/{username}")
+    public ResponseEntity<?> getRefreshToken(@PathVariable String refreshToken, @PathVariable String username) {
+        
+        if(this.refreshTokenService.verifyRefreshToken(refreshToken, username)){
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            String token = this.token.generateToken(userDetails);
+            return ResponseEntity.ok(
+                new AuthenticationResponseDto(false, "Token Refresh Successful")
+                    .setToken(token)
+                    .setUser(username)
+                    .setRefreshToken(refreshToken)
+                    .getResponseBody()
+            );
+        }
+
+        return ResponseEntity.status(401).body(
+            new AuthenticationResponseDto(true, "Invalid Credentials")
+                .getResponseBody()
+        );
     }
 }

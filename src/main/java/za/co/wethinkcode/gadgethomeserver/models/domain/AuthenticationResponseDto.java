@@ -2,7 +2,7 @@ package za.co.wethinkcode.gadgethomeserver.models.domain;
 
 import java.util.Map;
 
-public class AuthenticationDto {
+public class AuthenticationResponseDto {
     
     private Boolean error;
 
@@ -14,7 +14,7 @@ public class AuthenticationDto {
 
     private String user;
 
-    public AuthenticationDto(Boolean error, String message) {
+    public AuthenticationResponseDto(Boolean error, String message) {
         this.error = error;
         this.message = message;
     }
@@ -39,7 +39,7 @@ public class AuthenticationDto {
         return token;
     }
 
-    public AuthenticationDto setToken(String token) {
+    public AuthenticationResponseDto setToken(String token) {
         this.token = token;
         return this;
     }
@@ -48,7 +48,7 @@ public class AuthenticationDto {
         return refreshToken;
     }
 
-    public AuthenticationDto setRefreshToken(String refreshToken) {
+    public AuthenticationResponseDto setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
         return this;
     }
@@ -57,12 +57,12 @@ public class AuthenticationDto {
         return user;
     }
 
-    public AuthenticationDto setUser(String user) {
+    public AuthenticationResponseDto setUser(String user) {
         this.user = user;
         return this;
     }
 
-    public Map<String, Object> build() {
+    public Map<String, Object> getResponseBody() {
         if(this.token != null && this.refreshToken != null && this.user != null) {
             return Map.of(
                 "error", error,
