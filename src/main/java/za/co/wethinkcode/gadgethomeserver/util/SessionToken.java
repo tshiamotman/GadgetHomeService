@@ -16,6 +16,7 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 @Component
@@ -64,7 +65,8 @@ public class SessionToken implements Serializable {
 
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
-        if(this.blacklistRepo.existsById(username)) return false;
+        Optional<Blacklist> blacklist = this.blacklistRepo.findById(username); 
+        if(blacklist.isPresent()) return false;
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 

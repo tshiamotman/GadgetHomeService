@@ -2,7 +2,7 @@ package za.co.wethinkcode.gadgethomeserver.models.domain;
 
 import java.util.UUID;
 
-import org.springframework.data.annotation.Id;
+import javax.persistence.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 import za.co.wethinkcode.gadgethomeserver.models.database.User;

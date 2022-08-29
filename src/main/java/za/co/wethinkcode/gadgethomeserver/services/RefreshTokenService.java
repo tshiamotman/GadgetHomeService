@@ -21,14 +21,14 @@ public class RefreshTokenService {
     }
 
     public RefreshToken createRefreshToken(String username) {
-        Optional<RefreshToken> token = this.refreshTokenRepo.findByUser(username);
+        // Optional<RefreshToken> token = this.refreshTokenRepo.findByUser(username);
         Optional<User> user = this.userRepo.findById(username);
 
         if(user.isEmpty()) return null; 
 
-        if(token.isEmpty()) return new RefreshToken(user.get());
+        // if(token.isEmpty()) return new RefreshToken(user.get());
         
-        return token.get();
+        return new RefreshToken(user.get());
     }
 
     public Boolean verifyRefreshToken(String token, String username) {
