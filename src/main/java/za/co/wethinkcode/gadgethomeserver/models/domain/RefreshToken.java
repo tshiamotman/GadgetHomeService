@@ -4,14 +4,18 @@ import java.util.UUID;
 
 import javax.persistence.Id;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
 
 import za.co.wethinkcode.gadgethomeserver.models.database.User;
 
 @RedisHash("refreshtoken")
 public class RefreshToken {
-    @Id
+    @Id String id;
+
+    @Indexed
     private String token;
 
+    @Indexed
     private String user;
 
     public RefreshToken(User user) {

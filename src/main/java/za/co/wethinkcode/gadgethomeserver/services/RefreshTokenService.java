@@ -21,18 +21,18 @@ public class RefreshTokenService {
     }
 
     public RefreshToken createRefreshToken(String username) {
-        // Optional<RefreshToken> token = this.refreshTokenRepo.findByUser(username);
+        Optional<RefreshToken> token = this.refreshTokenRepo.findByUser(username);
         Optional<User> user = this.userRepo.findById(username);
 
         if(user.isEmpty()) return null; 
 
-        // if(token.isEmpty()) return new RefreshToken(user.get());
+        if(token.isEmpty()) return new RefreshToken(user.get());
         
         return new RefreshToken(user.get());
     }
 
     public Boolean verifyRefreshToken(String token, String username) {
-        Optional<RefreshToken> refreshToken = this.refreshTokenRepo.findById(token);
+        Optional<RefreshToken> refreshToken = this.refreshTokenRepo.findByToken(token);
 
         if(refreshToken.isPresent()) return username.equals(refreshToken.get().getUser());
         
@@ -40,7 +40,7 @@ public class RefreshTokenService {
     }
 
     public void deleteRefreshToken(String username) {
-        Optional<RefreshToken> refreshToken = this.refreshTokenRepo.findById(username);
+        Optional<RefreshToken> refreshToken = this.refreshTokenRepo.findByUser(username);
         
         if(refreshToken.isPresent() && username.equals(refreshToken.get().getUser())) 
             this.refreshTokenRepo.delete(refreshToken.get());

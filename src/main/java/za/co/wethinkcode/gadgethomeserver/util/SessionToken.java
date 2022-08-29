@@ -65,7 +65,7 @@ public class SessionToken implements Serializable {
 
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
-        Optional<Blacklist> blacklist = this.blacklistRepo.findById(username); 
+        Optional<Blacklist> blacklist = this.blacklistRepo.findByUsername(username); 
         if(blacklist.isPresent()) return false;
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
