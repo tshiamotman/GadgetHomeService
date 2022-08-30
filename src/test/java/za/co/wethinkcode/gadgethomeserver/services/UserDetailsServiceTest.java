@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import za.co.wethinkcode.gadgethomeserver.models.database.User;
 import za.co.wethinkcode.gadgethomeserver.models.domain.UserDto;
@@ -50,7 +51,7 @@ public class UserDetailsServiceTest {
 
     @Test
     void testLoadUserByUsername() {
-        User userDb = new User("user", "password");
+        User userDb = new User("user", new BCryptPasswordEncoder().encode("password"));
         userDb.setRole("USER");
         when(repo.findUserByUserName("user")).thenReturn(userDb);
 

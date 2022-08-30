@@ -14,6 +14,9 @@ public class AuthenticationResponseDto {
 
     private String user;
 
+    public AuthenticationResponseDto() {
+    }
+
     public AuthenticationResponseDto(Boolean error, String message) {
         this.error = error;
         this.message = message;
@@ -68,7 +71,7 @@ public class AuthenticationResponseDto {
                 "error", error,
                 "message", message,
                 "token", this.token,
-                "refresh", this.refreshToken,
+                "refreshToken", this.refreshToken,
                 "user", user
             );
         }

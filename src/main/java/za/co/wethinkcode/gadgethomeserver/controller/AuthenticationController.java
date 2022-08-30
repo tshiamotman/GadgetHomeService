@@ -99,7 +99,7 @@ public class AuthenticationController {
             String token = this.token.generateToken(userDetails);
             RefreshToken refreshToken = this.refreshTokenService.createRefreshToken(registerUser.getUserName());
             return ResponseEntity.ok(
-                    new AuthenticationResponseDto(false, "Logged In")
+                    new AuthenticationResponseDto(false, "Account Created Successfully")
                         .setToken(token)
                         .setUser(registerUser.getUserName())
                         .setRefreshToken(refreshToken.getToken())
