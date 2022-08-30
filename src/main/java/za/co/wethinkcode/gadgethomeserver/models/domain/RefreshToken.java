@@ -38,5 +38,13 @@ public class RefreshToken {
     public void setUser(String user) {
         this.user = user;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
     
 }
