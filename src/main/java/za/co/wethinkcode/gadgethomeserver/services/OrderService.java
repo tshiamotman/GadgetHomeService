@@ -30,7 +30,11 @@ public class OrderService {
         return order.getTransit();
     }
 
-    // public List<Order> getOrdersByBuyer(User buyer) {
-    //     orderRepo.getOrdersByBuyer(buyer);
-    // }
+    public Order getOrder(Long id) {
+        return orderRepo.getById(Long.valueOf(id));
+    }
+
+    public void deleteOrder(Order order) {
+        orderRepo.delete(order);;
+    }
 }
