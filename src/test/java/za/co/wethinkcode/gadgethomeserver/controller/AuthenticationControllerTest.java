@@ -49,7 +49,9 @@ public class AuthenticationControllerTest extends AbstractControllerTest {
     @Override
     @BeforeEach
     protected void setUp() throws Exception {
-        super.setUp();UserDetails user = new User("user", "password", new ArrayList<>());
+        super.setUp();
+        
+        UserDetails user = new User("user", "password", new ArrayList<>());
 
         UserDto userDto = new UserDto();
 

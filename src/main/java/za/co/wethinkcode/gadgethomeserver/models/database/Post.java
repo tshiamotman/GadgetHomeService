@@ -6,6 +6,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.time.LocalDate;
 
 @Entity
@@ -112,5 +115,22 @@ public class Post {
 
     public void setAmount(Double amount) {
         this.amount = amount;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s %s posted by %s on the %s", brand, model, device, owner.getUserName(), datePosted);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try{
+            Post post = objectMapper.convertValue(obj, Post.class);
+            return post.brand.equals(brand) && post.model.equals(model) && post.device.equals(device)
+                    && owner.getUserName().equals(post.owner.getUserName());
+        } catch(Exception e) {
+            return false;
+        }
     }
 }

@@ -53,15 +53,5 @@ class PostTest {
         assertEquals("The characteristics of someone or something", actualPost.getDescription());
         assertEquals("Device", actualPost.getDevice());
     }
-
-    private void setUser() {
-        user.setEmail("jane.doe@example.org");
-        user.setFirstName("Jane");
-        user.setLastName("Doe");
-        user.setNumber("42");
-        user.setPassword("iloveyou");
-        user.setRole("Role");
-        user.setUserName("janedoe");
-    }
 }
 

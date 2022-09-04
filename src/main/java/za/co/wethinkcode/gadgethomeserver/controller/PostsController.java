@@ -51,7 +51,7 @@ public class PostsController {
     }
 
     @PostMapping("/post")
-    public Post addPost(@RequestBody PostDto postDto) {
+    public ResponseEntity<?> addPost(@RequestBody PostDto postDto) {
         Authentication authentication = SecurityContextHolder
                 .getContext().getAuthentication();
 
@@ -61,15 +61,15 @@ public class PostsController {
 
         User user = userRepo.findUserByUserName(authentication.getName());
 
-        Post post = new Post(
-                postDto.getDevice(),
-                postDto.getModel(),
-                postDto.getBrand(),
-                postDto.getDescription(),
-                user,
-                postDto.getAmount());
+        Post post = postsService.addPost(new Post(
+            postDto.getDevice(),
+            postDto.getModel(),
+            postDto.getBrand(),
+            postDto.getDescription(),
+            user,
+            postDto.getAmount()));
 
-        return postsService.addPost(post);
+        return ResponseEntity.ok().body(post);
     }
 
     @PutMapping("/post/{id}")
@@ -81,7 +81,7 @@ public class PostsController {
         User user = userRepo.findUserByUserName(authentication.getName());
 
         if (!authentication.isAuthenticated() ||
-                user.equals(postDb.getOwner())) {
+                !user.getUserName().equals(postDb.getOwner().getUserName())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated to edit Post");
         }
 
@@ -103,7 +103,7 @@ public class PostsController {
 
         Post postDb = postsService.getPost(Long.valueOf(id));
 
-        if (!authentication.isAuthenticated() ||
+        if (!authentication.isAuthenticated() &&
                 userRepo.findUserByUserName(authentication.getName()).equals(postDb.getOwner())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated to delete Post");
         }

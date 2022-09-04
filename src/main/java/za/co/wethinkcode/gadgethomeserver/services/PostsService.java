@@ -29,8 +29,7 @@ public class PostsService {
     }
 
     public Post updatePost(Long id, Post post) {
-        Post postDb = postRepo.getById(id);
-        postRepo.delete(postDb);
+        post.setId(id);
         return postRepo.save(post);
     }
 
