@@ -103,8 +103,8 @@ public class PostsController {
 
         Post postDb = postsService.getPost(Long.valueOf(id));
 
-        if (!authentication.isAuthenticated() &&
-                userRepo.findUserByUserName(authentication.getName()).equals(postDb.getOwner())) {
+        if (!authentication.isAuthenticated() ||
+                !userRepo.findUserByUserName(authentication.getName()).equals(postDb.getOwner())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated to delete Post");
         }
         postsService.deletePost(postDb);

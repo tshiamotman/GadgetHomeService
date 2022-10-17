@@ -84,7 +84,7 @@ public class PostControllerTest extends AbstractControllerTest {
         BDDMockito.given(postService.getPostsByKeyword("cellphone"))
             .willReturn(mockPosts.findByModelOrBrandOrDevice("cellphone"));
 
-        BDDMockito.given(postService.addPost(any(Post.class))).willReturn(post);
+        BDDMockito.given(postService.addPost(any(Post.class))).willReturn(mockPosts.save(post));
     
         BDDMockito.given(postService.updatePost(anyLong(), any(Post.class))).willReturn(post);
     }
