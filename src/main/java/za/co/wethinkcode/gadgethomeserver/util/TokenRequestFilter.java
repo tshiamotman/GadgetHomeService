@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import za.co.wethinkcode.gadgethomeserver.services.UserDetailsService;
+import za.co.wethinkcode.gadgethomeserver.service.UserDetailsService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

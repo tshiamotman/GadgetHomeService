@@ -1,33 +1,41 @@
 package za.co.wethinkcode.gadgethomeserver.models.database;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "post")
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(name = "model")
     private String model;
+
+    @Column(name = "brand")
     private String brand;
+
+    @Column(name = "device")
     private String device;
 
     @ManyToOne
     @JoinColumn(name = "owner_user_name")
     private User owner;
+
+    @Column(name = "date_posted")
     private LocalDate datePosted;
 
+    @Column(name = "description")
     private String description;
+
+    @Column(name = "available")
     private boolean available;
+
+    @Column(name = "amount")
     private Double amount;
 
     public Post(String device, String model, String brand, String description, User owner, Double amount) {

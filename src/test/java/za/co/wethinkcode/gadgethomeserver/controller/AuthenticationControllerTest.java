@@ -26,8 +26,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import za.co.wethinkcode.gadgethomeserver.models.domain.AuthenticationResponseDto;
 import za.co.wethinkcode.gadgethomeserver.models.domain.RefreshToken;
 import za.co.wethinkcode.gadgethomeserver.models.domain.UserDto;
-import za.co.wethinkcode.gadgethomeserver.services.RefreshTokenService;
-import za.co.wethinkcode.gadgethomeserver.services.UserDetailsService;
+import za.co.wethinkcode.gadgethomeserver.service.RefreshTokenService;
+import za.co.wethinkcode.gadgethomeserver.service.UserDetailsService;
 import za.co.wethinkcode.gadgethomeserver.util.SessionToken;
 
 @AutoConfigureMockMvc

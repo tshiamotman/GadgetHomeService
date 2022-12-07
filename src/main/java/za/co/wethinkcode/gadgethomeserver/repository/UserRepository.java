@@ -8,8 +8,6 @@ import za.co.wethinkcode.gadgethomeserver.models.database.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
 
-    User findUserByUserName(String userName);
-
     boolean existsByUserName(String userName);
 
     boolean existsByEmail(String email);

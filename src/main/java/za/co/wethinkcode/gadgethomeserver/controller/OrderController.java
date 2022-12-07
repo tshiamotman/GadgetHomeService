@@ -1,6 +1,7 @@
 package za.co.wethinkcode.gadgethomeserver.controller;
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +20,8 @@ import za.co.wethinkcode.gadgethomeserver.models.database.Order;
 import za.co.wethinkcode.gadgethomeserver.models.database.Post;
 import za.co.wethinkcode.gadgethomeserver.models.database.User;
 import za.co.wethinkcode.gadgethomeserver.repository.UserRepository;
-import za.co.wethinkcode.gadgethomeserver.services.OrderService;
-import za.co.wethinkcode.gadgethomeserver.services.PostsService;
+import za.co.wethinkcode.gadgethomeserver.service.OrderService;
+import za.co.wethinkcode.gadgethomeserver.service.PostsService;
 
 @RestController
 @RequestMapping("/order")
@@ -50,11 +51,11 @@ public class OrderController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User UNAUTHORIZED");
         }
 
-        User user = userRepo.findUserByUserName(authentication.getName());
+        Optional<User> user = userRepo.findById(authentication.getName());
 
         Post post = postsService.getPost(Long.valueOf(map.get("post_id")));
 
-        return new Order(user, post);
+        return new Order(user.get(), post);
     }
 
     @DeleteMapping("/{id}")

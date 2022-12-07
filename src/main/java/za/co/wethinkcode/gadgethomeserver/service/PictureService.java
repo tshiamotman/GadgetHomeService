@@ -1,4 +1,4 @@
-package za.co.wethinkcode.gadgethomeserver.services;
+package za.co.wethinkcode.gadgethomeserver.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

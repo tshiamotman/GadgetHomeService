@@ -2,25 +2,32 @@ package za.co.wethinkcode.gadgethomeserver.models.domain;
 
 import java.util.UUID;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import org.springframework.data.redis.core.RedisHash;
-import org.springframework.data.redis.core.index.Indexed;
 
 import za.co.wethinkcode.gadgethomeserver.models.database.User;
 
-@RedisHash("refreshtoken")
+@Entity
 public class RefreshToken {
-    @Id String id;
+    @Id
+    @GeneratedValue()
+    private String id;
 
-    @Indexed
+    @Column(name = "token")
     private String token;
 
-    @Indexed
+    @Column(name = "user_id")
     private String user;
 
     public RefreshToken(User user) {
         this.user = user.getUserName();
         this.token = UUID.randomUUID().toString();
+    }
+
+    public RefreshToken() {
+
     }
 
     public String getToken() {

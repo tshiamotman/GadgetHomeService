@@ -1,4 +1,4 @@
-package za.co.wethinkcode.gadgethomeserver.services;
+package za.co.wethinkcode.gadgethomeserver.service;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -10,26 +10,31 @@ import org.springframework.stereotype.Service;
 
 import za.co.wethinkcode.gadgethomeserver.models.domain.UserDto;
 import za.co.wethinkcode.gadgethomeserver.repository.UserRepository;
+import za.co.wethinkcode.gadgethomeserver.mapper.UserMapper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
 
-    final UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    public UserDetailsService(UserRepository userRepository) {
+    private final UserMapper userMapper;
+
+    public UserDetailsService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
     }
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        za.co.wethinkcode.gadgethomeserver.models.database.User user = userRepository.findUserByUserName(userName);
+        Optional<za.co.wethinkcode.gadgethomeserver.models.database.User> user = userRepository.findById(userName);
         List<GrantedAuthority> authorityList = new ArrayList<>();
-        authorityList.add(new SimpleGrantedAuthority(user.getRole()));
+        authorityList.add(new SimpleGrantedAuthority(user.get().getRole()));
 
-        return new User(user.getUserName(), user.getPassword(), authorityList);
+        return new User(user.get().getUserName(), user.get().getPassword(), authorityList);
     }
 
     public UserDetails createUserDetails(UserDto userDto) throws Exception {
@@ -58,5 +63,15 @@ public class UserDetailsService implements org.springframework.security.core.use
         authorityList.add(new SimpleGrantedAuthority(userDto.getRole()));
 
         return new User(userDto.getUserName(), userDto.getPassword(), authorityList);
+    }
+
+    public UserDto getUserDto(String username) {
+        Optional<za.co.wethinkcode.gadgethomeserver.models.database.User> user = userRepository.findById(username);
+
+        if(user.isEmpty()) {
+            return null;
+        } else {
+            return userMapper.toDto(user.get());
+        }
     }
 }

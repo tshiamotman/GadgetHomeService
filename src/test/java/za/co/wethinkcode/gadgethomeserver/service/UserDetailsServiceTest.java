@@ -1,4 +1,4 @@
-package za.co.wethinkcode.gadgethomeserver.services;
+package za.co.wethinkcode.gadgethomeserver.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -10,20 +10,26 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import za.co.wethinkcode.gadgethomeserver.mapper.UserMapper;
 import za.co.wethinkcode.gadgethomeserver.models.database.User;
 import za.co.wethinkcode.gadgethomeserver.models.domain.UserDto;
 import za.co.wethinkcode.gadgethomeserver.repository.UserRepository;
+
+import java.util.Optional;
 
 public class UserDetailsServiceTest {
 
     UserDetailsService service;
     UserRepository repo;
 
+    UserMapper userMapper;
+
     @BeforeEach
     void setup() {
         repo = mock(UserRepository.class);
+        userMapper = mock(UserMapper.class);
 
-        service = new UserDetailsService(repo);
+        service = new UserDetailsService(repo, userMapper);
     }
 
     @Test
@@ -53,7 +59,7 @@ public class UserDetailsServiceTest {
     void testLoadUserByUsername() {
         User userDb = new User("user", new BCryptPasswordEncoder().encode("password"));
         userDb.setRole("USER");
-        when(repo.findUserByUserName("user")).thenReturn(userDb);
+        when(repo.findById("user")).thenReturn(Optional.of(userDb));
 
         UserDetails user = service.loadUserByUsername("user");
 

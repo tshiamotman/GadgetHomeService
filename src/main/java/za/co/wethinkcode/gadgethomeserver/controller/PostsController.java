@@ -11,7 +11,7 @@ import za.co.wethinkcode.gadgethomeserver.models.database.Post;
 import za.co.wethinkcode.gadgethomeserver.models.database.User;
 import za.co.wethinkcode.gadgethomeserver.models.domain.PostDto;
 import za.co.wethinkcode.gadgethomeserver.repository.UserRepository;
-import za.co.wethinkcode.gadgethomeserver.services.PostsService;
+import za.co.wethinkcode.gadgethomeserver.service.PostsService;
 
 import java.util.List;
 
@@ -59,7 +59,7 @@ public class PostsController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User unauthorised");
         }
 
-        User user = userRepo.findUserByUserName(authentication.getName());
+        User user = userRepo.findById(authentication.getName()).get();
 
         Post post = postsService.addPost(new Post(
             postDto.getDevice(),
@@ -78,7 +78,7 @@ public class PostsController {
                 .getContext().getAuthentication();
 
         Post postDb = postsService.getPost(Long.valueOf(id));
-        User user = userRepo.findUserByUserName(authentication.getName());
+        User user = userRepo.findById(authentication.getName()).get();
 
         if (!authentication.isAuthenticated() ||
                 !user.getUserName().equals(postDb.getOwner().getUserName())) {
@@ -104,7 +104,7 @@ public class PostsController {
         Post postDb = postsService.getPost(Long.valueOf(id));
 
         if (!authentication.isAuthenticated() ||
-                !userRepo.findUserByUserName(authentication.getName()).equals(postDb.getOwner())) {
+                !userRepo.findById(authentication.getName()).equals(postDb.getOwner())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated to delete Post");
         }
         postsService.deletePost(postDb);

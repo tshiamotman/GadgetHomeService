@@ -13,8 +13,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import za.co.wethinkcode.gadgethomeserver.models.database.Picture;
 import za.co.wethinkcode.gadgethomeserver.models.database.Post;
-import za.co.wethinkcode.gadgethomeserver.services.PictureService;
-import za.co.wethinkcode.gadgethomeserver.services.PostsService;
+import za.co.wethinkcode.gadgethomeserver.service.PictureService;
+import za.co.wethinkcode.gadgethomeserver.service.PostsService;
 
 import java.util.ArrayList;
 import java.util.List;

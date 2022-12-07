@@ -12,7 +12,7 @@ public class AuthenticationResponseDto {
 
     private String refreshToken;
 
-    private String user;
+    private UserDto user;
 
     public AuthenticationResponseDto() {
     }
@@ -56,11 +56,11 @@ public class AuthenticationResponseDto {
         return this;
     }
 
-    public String getUser() {
+    public UserDto getUser() {
         return user;
     }
 
-    public AuthenticationResponseDto setUser(String user) {
+    public AuthenticationResponseDto setUser(UserDto user) {
         this.user = user;
         return this;
     }

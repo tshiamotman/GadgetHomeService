@@ -6,10 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,8 +26,8 @@ import za.co.wethinkcode.gadgethomeserver.mocks.MockPosts;
 import za.co.wethinkcode.gadgethomeserver.models.database.Post;
 import za.co.wethinkcode.gadgethomeserver.models.database.User;
 import za.co.wethinkcode.gadgethomeserver.repository.UserRepository;
-import za.co.wethinkcode.gadgethomeserver.services.PostsService;
-import za.co.wethinkcode.gadgethomeserver.services.UserDetailsService;
+import za.co.wethinkcode.gadgethomeserver.service.PostsService;
+import za.co.wethinkcode.gadgethomeserver.service.UserDetailsService;
 import za.co.wethinkcode.gadgethomeserver.util.SessionToken;
 
 @AutoConfigureMockMvc
@@ -73,9 +70,9 @@ public class PostControllerTest extends AbstractControllerTest {
         BDDMockito.given(userDetailsService.loadUserByUsername("user"))
             .willReturn(new org.springframework.security.core.userdetails.User("user", "password", new ArrayList<>()));
 
-        BDDMockito.given(userRepo.findUserByUserName("user")).willReturn(owner);
+        BDDMockito.given(userRepo.findById("user")).willReturn(Optional.of(owner));
 
-        BDDMockito.given(userRepo.findUserByUserName("test_1")).willReturn(new User("test_1", "password"));
+        BDDMockito.given(userRepo.findById("test_1")).willReturn(Optional.of(new User("test_1", "password")));
 
         BDDMockito.given(postService.getPost(1L)).willReturn(mockPosts.getById(1L));
 

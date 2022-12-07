@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 import za.co.wethinkcode.gadgethomeserver.models.domain.AuthenticationResponseDto;
 import za.co.wethinkcode.gadgethomeserver.models.domain.RefreshToken;
 import za.co.wethinkcode.gadgethomeserver.models.domain.UserDto;
-import za.co.wethinkcode.gadgethomeserver.services.RefreshTokenService;
-import za.co.wethinkcode.gadgethomeserver.services.UserDetailsService;
+import za.co.wethinkcode.gadgethomeserver.service.RefreshTokenService;
+import za.co.wethinkcode.gadgethomeserver.service.UserDetailsService;
 import za.co.wethinkcode.gadgethomeserver.util.SessionToken;
 
 @CrossOrigin(maxAge = 3600)
@@ -62,7 +62,7 @@ public class AuthenticationController {
                 return ResponseEntity.ok(
                     new AuthenticationResponseDto(false, "Logged In")
                         .setToken(token)
-                        .setUser(userLogin.getUserName())
+                        .setUser(userDetailsService.getUserDto(userLogin.getUserName()))
                         .setRefreshToken(refreshToken.getToken())
                         .getResponseBody()
                     );
@@ -101,7 +101,7 @@ public class AuthenticationController {
             return ResponseEntity.ok(
                     new AuthenticationResponseDto(false, "Account Created Successfully")
                         .setToken(token)
-                        .setUser(registerUser.getUserName())
+                        .setUser(registerUser)
                         .setRefreshToken(refreshToken.getToken())
                         .getResponseBody()
                     );
@@ -124,7 +124,7 @@ public class AuthenticationController {
             return ResponseEntity.ok(
                 new AuthenticationResponseDto(false, "Token Refresh Successful")
                     .setToken(token)
-                    .setUser(username)
+                    .setUser(userDetailsService.getUserDto(username))
                     .setRefreshToken(refreshToken)
                     .getResponseBody()
             );

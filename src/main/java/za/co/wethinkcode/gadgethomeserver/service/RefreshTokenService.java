@@ -1,4 +1,4 @@
-package za.co.wethinkcode.gadgethomeserver.services;
+package za.co.wethinkcode.gadgethomeserver.service;
 
 import java.util.Optional;
 

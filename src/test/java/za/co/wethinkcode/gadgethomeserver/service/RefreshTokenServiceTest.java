@@ -1,4 +1,4 @@
-package za.co.wethinkcode.gadgethomeserver.services;
+package za.co.wethinkcode.gadgethomeserver.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

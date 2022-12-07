@@ -1,23 +1,26 @@
 package za.co.wethinkcode.gadgethomeserver.models.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-import org.springframework.data.redis.core.RedisHash;
-import org.springframework.data.redis.core.index.Indexed;
-
-@RedisHash("blacklist")
+@Entity
 public class Blacklist {
-    @Id String id;
+    @Id
+    @GeneratedValue()
+    public String id;
 
-    @Indexed
     private String username;
 
-    @Indexed
     private String token;
 
     public Blacklist(String username, String token) {
         this.username = username;
         this.token = token;
+    }
+
+    public Blacklist() {
+
     }
 
     public String getUsername() {

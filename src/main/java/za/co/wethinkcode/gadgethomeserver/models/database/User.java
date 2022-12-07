@@ -3,20 +3,28 @@ package za.co.wethinkcode.gadgethomeserver.models.database;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "user")
 public class User {
     @Id
+    @Column(name = "user_name")
     private String userName;
 
+    @Column(name = "email")
     private String email;
 
+    @Column(name = "password")
     private String password;
 
+    @Column(name = "first_name")
     private String firstName;
 
+    @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "number")
     private String number;
 
+    @Column(name = "role")
     private String role;
 
     public User() {

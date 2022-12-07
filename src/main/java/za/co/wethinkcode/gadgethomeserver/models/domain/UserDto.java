@@ -2,33 +2,31 @@ package za.co.wethinkcode.gadgethomeserver.models.domain;
 
 import javax.xml.bind.annotation.XmlElement;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties
 public class UserDto {
     @JsonProperty("user_name")
     private String userName;
 
-    @XmlElement(nillable = true)
     @JsonProperty("first_name")
     private String firstName;
 
-    @XmlElement(nillable = true)
     @JsonProperty("last_name")
     private String lastName;
 
-    @XmlElement(nillable = true)
     @JsonProperty("password")
+    @JsonIgnore
     private String password;
 
-    @XmlElement(nillable = true)
     @JsonProperty("number")
     private String number;
 
-    @XmlElement(nillable = true)
     @JsonProperty("email")
     private String email;
 
-    @XmlElement(nillable = true)
     @JsonProperty("role")
     private String role;
 
@@ -59,6 +57,7 @@ public class UserDto {
         this.lastName = lastName;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
