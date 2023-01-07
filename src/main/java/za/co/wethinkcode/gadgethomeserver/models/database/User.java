@@ -27,6 +27,9 @@ public class User {
     @Column(name = "role")
     private String role;
 
+    @Column(name = "device_id")
+    private String deviceId;
+
     public User() {
     }
 
@@ -90,5 +93,13 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
     }
 }

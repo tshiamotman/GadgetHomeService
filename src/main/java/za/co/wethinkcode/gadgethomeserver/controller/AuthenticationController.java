@@ -143,6 +143,7 @@ public class AuthenticationController {
         this.token.invalidateToken(token);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        authentication.getPrincipal();
         if(authentication.isAuthenticated()) {
             String username = authentication.getName();
             this.refreshTokenService.deleteRefreshToken(username);

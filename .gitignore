@@ -33,3 +33,4 @@ build/
 .vscode/
 
 Makefile
+/firebase-service-account.json

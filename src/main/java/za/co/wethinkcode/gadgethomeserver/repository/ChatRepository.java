@@ -7,7 +7,9 @@ import za.co.wethinkcode.gadgethomeserver.models.database.Chat;
 import za.co.wethinkcode.gadgethomeserver.models.database.Post;
 import za.co.wethinkcode.gadgethomeserver.models.database.User;
 
+import java.util.Optional;
+
 @Repository
 public interface ChatRepository extends JpaRepository<Chat, Long> {
-    boolean existsByBuyerAndPost(User buyer, Post post);
+        Optional<Chat> findByMessageId(String messageId);
 }

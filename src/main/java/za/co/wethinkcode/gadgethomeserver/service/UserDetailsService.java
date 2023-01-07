@@ -14,6 +14,7 @@ import za.co.wethinkcode.gadgethomeserver.mapper.UserMapper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -47,16 +48,9 @@ public class UserDetailsService implements org.springframework.security.core.use
 
         List<GrantedAuthority> authorityList = new ArrayList<>();
 
-        za.co.wethinkcode.gadgethomeserver.models.database.User user = 
-            new za.co.wethinkcode.gadgethomeserver.models.database.User();
+        za.co.wethinkcode.gadgethomeserver.models.database.User user = userMapper.toEntity(userDto);
 
         user.setPassword(new BCryptPasswordEncoder().encode(userDto.getPassword()));
-        user.setFirstName(userDto.getFirstName());
-        user.setLastName(userDto.getLastName());
-        user.setUserName(userDto.getUserName());
-        user.setNumber(userDto.getNumber());
-        user.setEmail(userDto.getEmail());
-        user.setRole(userDto.getRole());
 
         userRepository.save(user);
 
@@ -72,6 +66,22 @@ public class UserDetailsService implements org.springframework.security.core.use
             return null;
         } else {
             return userMapper.toDto(user.get());
+        }
+    }
+
+    public za.co.wethinkcode.gadgethomeserver.models.database.User getUser(String username) {
+        Optional<za.co.wethinkcode.gadgethomeserver.models.database.User> user = userRepository.findById(username);
+
+        return user.orElse(null);
+    }
+
+    public UserDto saveDeviceToContact(UserDto userDto) {
+        za.co.wethinkcode.gadgethomeserver.models.database.User user = userRepository.findById(userDto.getUserName()).orElseThrow();
+        if(Objects.equals(user.getDeviceId(), userDto.getDeviceId())) {
+            return userDto;
+        } else {
+            user.setDeviceId(userDto.getDeviceId());
+            return userMapper.toDto(userRepository.save(user));
         }
     }
 }
