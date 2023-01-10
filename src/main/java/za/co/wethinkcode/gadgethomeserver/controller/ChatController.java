@@ -41,4 +41,13 @@ public class ChatController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("/getConversations")
+    public ResponseEntity<?> getConversations() {
+        try {
+            return ResponseEntity.ok(chatService.getAllConversations());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

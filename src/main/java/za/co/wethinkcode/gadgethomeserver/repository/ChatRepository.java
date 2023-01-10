@@ -4,12 +4,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import za.co.wethinkcode.gadgethomeserver.models.database.Chat;
-import za.co.wethinkcode.gadgethomeserver.models.database.Post;
-import za.co.wethinkcode.gadgethomeserver.models.database.User;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface ChatRepository extends JpaRepository<Chat, Long> {
-        Optional<Chat> findByMessageId(String messageId);
+    Optional<Chat> findByMessageId(String messageId);
+
+    List<Chat> findAllBySenderUserNameOrRecipientUserName(String senderUserName, String recipientUserName);
 }

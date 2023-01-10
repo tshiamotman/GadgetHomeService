@@ -1,10 +1,8 @@
 package za.co.wethinkcode.gadgethomeserver.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
-import com.rabbitmq.client.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.security.core.Authentication;
@@ -16,14 +14,8 @@ import za.co.wethinkcode.gadgethomeserver.models.domain.ChatDto;
 import za.co.wethinkcode.gadgethomeserver.models.domain.UserDto;
 import za.co.wethinkcode.gadgethomeserver.repository.ChatRepository;
 
-import java.io.IOException;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.TimeoutException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.*;
 
 @Service
 public class ChatService {
@@ -34,9 +26,7 @@ public class ChatService {
 
     private final ChatMapper chatMapper;
 
-    private final ObjectMapper objectMapper;
-
-    private final ConnectionFactory factory;
+    private final RabbitMqService rabbitMqService;
 
     private final Log logger = LogFactory.getLog(this.getClass());
 
@@ -45,42 +35,22 @@ public class ChatService {
                        UserDetailsService userService,
                        PostsService postsService,
                        FirebaseMessaging firebaseMessaging,
-                       ChatMapper chatMapper,
-                       ObjectMapper objectMapper, ConnectionFactory factory) {
+                       ChatMapper chatMapper, RabbitMqService rabbitMqService) {
         this.chatRepo = chatRepository;
         this.userService = userService;
         this.postsService = postsService;
         this.firebaseMessaging = firebaseMessaging;
         this.chatMapper = chatMapper;
-        this.objectMapper = objectMapper;
-        this.factory = factory;
+        this.rabbitMqService = rabbitMqService;
     }
 
 
-    public ChatDto sendMessage(ChatDto chatDto) throws IOException {
+    public ChatDto sendMessage(ChatDto chatDto) {
         UserDto recipient = userService.getUserDto(chatDto.getRecipientUsername());
 
         Chat chatEntity = chatRepo.save(chatMapper.toEntity(chatDto));
         if(recipient.getDeviceId() == null || Objects.equals(recipient.getDeviceId(), "")) {
-            Connection connection = null;
-            try {
-                connection = factory.newConnection();
-                Channel channel = connection.createChannel();
-
-                channel.exchangeDeclare("messages", "direct");
-
-                channel.queueDeclare(recipient.getUserName(), false, false, false, null);
-                channel.queueBind(recipient.getUserName(), "messages", recipient.getUserName());
-
-                channel.basicPublish("messages", recipient.getUserName(), null,
-                        objectMapper.writeValueAsBytes(chatDto));
-            } catch (IOException | TimeoutException e) {
-                logger.error(e.getMessage());
-                throw new RuntimeException(e);
-            } finally {
-                assert connection != null;
-                connection.close();
-            }
+            Boolean sentToQueue = rabbitMqService.publishMessageToQueue(chatDto, recipient.getUserName());
         } else {
             Message msg = Message.builder()
                 .setToken(recipient.getDeviceId())
@@ -89,7 +59,7 @@ public class ChatService {
                 .putData("sent", LocalDate.now().toString())
                 .build();
 
-            String id = null;
+            String id;
             try {
                 id = firebaseMessaging.send(msg);
             } catch (FirebaseMessagingException e) {
@@ -110,33 +80,16 @@ public class ChatService {
         return chatMapper.toDto(savedChat);
     }
 
-    public UserDto updateDeviceId(UserDto user) throws Exception {
+    public UserDto updateDeviceId(UserDto user) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(Objects.equals(user.getUserName(), authentication.getName())){
             
             UserDto savedUser = userService.saveDeviceToContact(user);
 
-            Connection connection = null;
-            try {
-                connection = factory.newConnection();
-                Channel channel = connection.createChannel();
-                channel.queueDeclare(user.getUserName(), false, false, false, null);
+            List<ChatDto> queueMessages = rabbitMqService.getQueueMessages(user.getUserName());
 
-                long messageCount = channel.messageCount(user.getUserName());
+            queueMessages.forEach(this::sendMessage);
 
-                for(long i = 0; i < messageCount; i++) {
-                    GetResponse response = channel.basicGet(user.getUserName(), true);
-                    ChatDto chatDto = objectMapper.readValue(new String(response.getBody()), ChatDto.class);
-                    sendMessage(chatDto);
-                }
-                channel.queueDelete(user.getUserName());
-            } catch (IOException | TimeoutException e) {
-                logger.error(e.getMessage());
-                throw new RuntimeException(e);
-            } finally {
-                assert connection != null;
-                connection.close();
-            }
             return savedUser;
         } else {
             throw new RuntimeException("User does not match");
@@ -147,5 +100,36 @@ public class ChatService {
         Chat chatEntity = chatRepo.findByMessageId(messageId).orElseThrow();
         chatEntity.setMessageRead(true);
         return chatMapper.toDto(chatRepo.save(chatEntity));
+    }
+
+    public Map<String, List<ChatDto>> getAllConversations() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        List<Chat> allChats = chatRepo
+                .findAllBySenderUserNameOrRecipientUserName(username, username);
+
+        Set<String> usernames = new HashSet<>();
+
+        allChats.forEach(chat -> {
+            usernames.add(chat.getRecipient().getUserName());
+            usernames.add(chat.getSender().getUserName());
+        });
+
+        usernames.remove(username);
+
+        Map<String, List<ChatDto>> conversations = new HashMap<>();
+
+        usernames.forEach(user -> {
+            List<ChatDto> conversation = new ArrayList<>();
+            for(Chat chat: allChats) {
+                if(Objects.equals(chat.getSender().getUserName(), user) ||
+                        Objects.equals(chat.getRecipient().getUserName(), user)) {
+                    conversation.add(chatMapper.toDto(chat));
+                }
+            }
+            conversations.put(user, conversation);
+        });
+        return conversations;
     }
 }
