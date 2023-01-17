@@ -30,7 +30,7 @@ public class UserDto {
     @JsonProperty("role")
     private String role;
 
-    private String deviceId;
+    private DeviceTokenDto deviceToken;
 
     public UserDto() {
     }
@@ -92,12 +92,11 @@ public class UserDto {
         this.email = email;
     }
 
-    public String getDeviceId() {
-        return deviceId;
+    public DeviceTokenDto getDeviceToken() {
+        return deviceToken;
     }
 
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
+    public void setDeviceToken(DeviceTokenDto deviceToken) {
+        this.deviceToken = deviceToken;
     }
-
 }

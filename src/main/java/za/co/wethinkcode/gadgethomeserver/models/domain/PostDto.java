@@ -1,12 +1,13 @@
 package za.co.wethinkcode.gadgethomeserver.models.domain;
 
-import javax.xml.bind.annotation.XmlElement;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
+import java.util.Date;
+
 @JsonIgnoreProperties
-public class PostDto {
+public class PostDto implements Serializable {
     private Long id;
     @JsonProperty("model")
     private String model;
@@ -20,8 +21,14 @@ public class PostDto {
     @JsonProperty("description")
     private String description;
 
-    @JsonProperty("amount")
-    private Double amount;
+    @JsonProperty("created_date")
+    private Date createdDate;
+
+    @JsonProperty("price")
+    private Double price;
+
+    @JsonProperty("owner")
+    private UserDto owner;
 
     public PostDto() {
     }
@@ -66,13 +73,28 @@ public class PostDto {
         this.description = description;
     }
 
-    public Double getAmount() {
-        return amount;
+    public Double getPrice() {
+        return price;
     }
 
-    public void setAmount(Double amount) {
-        this.amount = amount;
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
 
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public UserDto getOwner() {
+        return owner;
+    }
+
+    public void setOwner(UserDto owner) {
+        this.owner = owner;
+    }
 }

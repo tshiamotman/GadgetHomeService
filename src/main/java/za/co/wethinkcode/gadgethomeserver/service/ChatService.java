@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 import za.co.wethinkcode.gadgethomeserver.mapper.ChatMapper;
 import za.co.wethinkcode.gadgethomeserver.models.database.Chat;
 import za.co.wethinkcode.gadgethomeserver.models.domain.ChatDto;
+import za.co.wethinkcode.gadgethomeserver.models.domain.DeviceTokenDto;
 import za.co.wethinkcode.gadgethomeserver.models.domain.UserDto;
 import za.co.wethinkcode.gadgethomeserver.repository.ChatRepository;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -47,13 +49,17 @@ public class ChatService {
 
     public ChatDto sendMessage(ChatDto chatDto) {
         UserDto recipient = userService.getUserDto(chatDto.getRecipientUsername());
+        UserDto sender = userService.getUserDto(chatDto.getSenderUsername());
+
+        chatDto.setSender(sender);
+        chatDto.setRecipient(recipient);
 
         Chat chatEntity = chatRepo.save(chatMapper.toEntity(chatDto));
-        if(recipient.getDeviceId() == null || Objects.equals(recipient.getDeviceId(), "")) {
+        if(recipient.getDeviceToken() == null) {
             Boolean sentToQueue = rabbitMqService.publishMessageToQueue(chatDto, recipient.getUserName());
         } else {
             Message msg = Message.builder()
-                .setToken(recipient.getDeviceId())
+                .setToken(recipient.getDeviceToken().getToken())
                 .putData("body", chatDto.getMessage())
                 .putData("sender", chatDto.getSenderUsername())
                 .putData("sent", LocalDate.now().toString())
@@ -67,11 +73,8 @@ public class ChatService {
                 throw new RuntimeException(e);
             }
             chatEntity.setMessageId(id);
-            chatEntity.setMessageDelivered(true);
+            chatEntity.setMessageDelivered(Date.from(Instant.now()));
         }
-
-        chatEntity.setRecipient(userService.getUser(recipient.getUserName()));
-        chatEntity.setSender(userService.getUser(chatDto.getSenderUsername()));
 
         if(chatDto.getPost() != null) chatEntity.setPost(postsService.getPost(chatDto.getPost().getId()));
 
@@ -80,25 +83,21 @@ public class ChatService {
         return chatMapper.toDto(savedChat);
     }
 
-    public UserDto updateDeviceId(UserDto user) {
+    public UserDto updateDeviceId(DeviceTokenDto deviceTokenDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(Objects.equals(user.getUserName(), authentication.getName())){
-            
-            UserDto savedUser = userService.saveDeviceToContact(user);
 
-            List<ChatDto> queueMessages = rabbitMqService.getQueueMessages(user.getUserName());
+        UserDto savedUser = userService.saveDeviceToContact(deviceTokenDto);
 
-            queueMessages.forEach(this::sendMessage);
+        List<ChatDto> queueMessages = rabbitMqService.getQueueMessages(authentication.getName());
 
-            return savedUser;
-        } else {
-            throw new RuntimeException("User does not match");
-        }
+        queueMessages.forEach(this::sendMessage);
+
+        return savedUser;
     }
 
     public ChatDto setMessageToRead(String messageId) {
         Chat chatEntity = chatRepo.findByMessageId(messageId).orElseThrow();
-        chatEntity.setMessageRead(true);
+        chatEntity.setMessageRead(Date.from(Instant.now()));
         return chatMapper.toDto(chatRepo.save(chatEntity));
     }
 

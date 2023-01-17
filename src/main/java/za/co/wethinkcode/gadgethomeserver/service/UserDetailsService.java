@@ -1,14 +1,20 @@
 package za.co.wethinkcode.gadgethomeserver.service;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import za.co.wethinkcode.gadgethomeserver.mapper.DeviceTokenMapper;
+import za.co.wethinkcode.gadgethomeserver.models.database.DeviceToken;
+import za.co.wethinkcode.gadgethomeserver.models.domain.DeviceTokenDto;
 import za.co.wethinkcode.gadgethomeserver.models.domain.UserDto;
+import za.co.wethinkcode.gadgethomeserver.repository.DeviceTokenRepository;
 import za.co.wethinkcode.gadgethomeserver.repository.UserRepository;
 import za.co.wethinkcode.gadgethomeserver.mapper.UserMapper;
 
@@ -22,11 +28,17 @@ public class UserDetailsService implements org.springframework.security.core.use
 
     private final UserRepository userRepository;
 
+    private final DeviceTokenRepository deviceTokenRepository;
+
     private final UserMapper userMapper;
 
-    public UserDetailsService(UserRepository userRepository, UserMapper userMapper) {
+    private final DeviceTokenMapper deviceTokenMapper;
+
+    public UserDetailsService(UserRepository userRepository, DeviceTokenRepository deviceTokenRepository, UserMapper userMapper, DeviceTokenMapper deviceTokenMapper) {
         this.userRepository = userRepository;
+        this.deviceTokenRepository = deviceTokenRepository;
         this.userMapper = userMapper;
+        this.deviceTokenMapper = deviceTokenMapper;
     }
 
     @Override
@@ -65,23 +77,31 @@ public class UserDetailsService implements org.springframework.security.core.use
         if(user.isEmpty()) {
             return null;
         } else {
+            Optional<DeviceToken> deviceToken = deviceTokenRepository.findByUserUserName(username);
+            za.co.wethinkcode.gadgethomeserver.models.database.User userEntity = user.get();
+            deviceToken.ifPresent(userEntity::setDeviceToken);
             return userMapper.toDto(user.get());
         }
     }
 
-    public za.co.wethinkcode.gadgethomeserver.models.database.User getUser(String username) {
-        Optional<za.co.wethinkcode.gadgethomeserver.models.database.User> user = userRepository.findById(username);
+    public UserDto saveDeviceToContact(DeviceTokenDto deviceTokenDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
 
-        return user.orElse(null);
-    }
+        za.co.wethinkcode.gadgethomeserver.models.database.User user = userRepository.findById(username).orElseThrow();
+        UserDto userDto = userMapper.toDto(user);
 
-    public UserDto saveDeviceToContact(UserDto userDto) {
-        za.co.wethinkcode.gadgethomeserver.models.database.User user = userRepository.findById(userDto.getUserName()).orElseThrow();
-        if(Objects.equals(user.getDeviceId(), userDto.getDeviceId())) {
-            return userDto;
+        Optional<DeviceToken> deviceToken = deviceTokenRepository.findByUserUserName(user.getUserName());
+        if(deviceToken.isPresent() && Objects.equals(deviceToken.get().getToken(), deviceTokenDto.getToken())) {
+            userDto.setDeviceToken(deviceTokenMapper.toDto(deviceToken.get()));
         } else {
-            user.setDeviceId(userDto.getDeviceId());
-            return userMapper.toDto(userRepository.save(user));
+            deviceToken.ifPresent(deviceTokenRepository::delete);
+
+            DeviceToken newDeviceToken = deviceTokenMapper.toEntity(deviceTokenDto);
+            newDeviceToken.setUser(user);
+
+            userDto.setDeviceToken(deviceTokenMapper.toDto(deviceTokenRepository.save(newDeviceToken)));
         }
+        return userDto;
     }
 }

@@ -2,6 +2,8 @@ package za.co.wethinkcode.gadgethomeserver.models.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.Date;
+
 @JsonIgnoreProperties
 public class ChatDto {
     private Long id;
@@ -18,9 +20,11 @@ public class ChatDto {
 
     private UserDto recipient;
 
-    private Boolean messageDelivered;
+    private Date createdDate;
 
-    private Boolean messageRead;
+    private Date messageDelivered;
+
+    private Date messageRead;
 
     private PostDto post;
 
@@ -84,19 +88,19 @@ public class ChatDto {
         this.recipient = recipient;
     }
 
-    public Boolean getMessageDelivered() {
+    public Date getMessageDelivered() {
         return messageDelivered;
     }
 
-    public void setMessageDelivered(Boolean messageDelivered) {
+    public void setMessageDelivered(Date messageDelivered) {
         this.messageDelivered = messageDelivered;
     }
 
-    public Boolean getMessageRead() {
+    public Date getMessageRead() {
         return messageRead;
     }
 
-    public void setMessageRead(Boolean messageRead) {
+    public void setMessageRead(Date messageRead) {
         this.messageRead = messageRead;
     }
 
@@ -106,5 +110,13 @@ public class ChatDto {
 
     public void setPost(PostDto post) {
         this.post = post;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 }

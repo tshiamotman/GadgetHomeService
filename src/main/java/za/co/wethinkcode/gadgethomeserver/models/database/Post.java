@@ -3,8 +3,10 @@ package za.co.wethinkcode.gadgethomeserver.models.database;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.data.annotation.CreatedDate;
 
-import java.time.LocalDate;
+import java.time.Instant;
+import java.util.Date;
 
 @Entity
 @Table(name = "post")
@@ -23,30 +25,34 @@ public class Post {
     private String device;
 
     @ManyToOne
-    @JoinColumn(name = "owner_user_name")
+    @JoinColumn(name = "owner_id")
     private User owner;
 
-    @Column(name = "date_posted")
-    private LocalDate datePosted;
+    @CreatedDate
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "create_date")
+    private Date createdDate;
 
     @Column(name = "description")
     private String description;
 
-    @Column(name = "available")
+    @Column(name = "is_available")
     private boolean available;
 
-    @Column(name = "amount")
-    private Double amount;
+    @Column(name = "price")
+    private Double price;
 
-    public Post(String device, String model, String brand, String description, User owner, Double amount) {
+
+
+    public Post(String device, String model, String brand, String description, User owner, Double price) {
         this.device = device;
         this.model = model;
         this.brand = brand;
         this.owner = owner;
         this.description = description;
-        this.amount = amount;
+        this.price = price;
         this.available = true;
-        this.datePosted = LocalDate.now();
+        this.createdDate = Date.from(Instant.now());
     }
 
     public Post() {
@@ -69,8 +75,8 @@ public class Post {
         this.owner = owner;
     }
 
-    public void setDatePosted(LocalDate datePosted) {
-        this.datePosted = datePosted;
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 
     public void setId(Long id) {
@@ -105,8 +111,8 @@ public class Post {
         this.available = available;
     }
 
-    public LocalDate getDatePosted() {
-        return datePosted;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
     public String getDescription() {
@@ -117,17 +123,17 @@ public class Post {
         this.description = description;
     }
 
-    public Double getAmount() {
-        return amount;
+    public Double getPrice() {
+        return price;
     }
 
-    public void setAmount(Double amount) {
-        this.amount = amount;
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
     @Override
     public String toString() {
-        return String.format("%s %s %s posted by %s on the %s", brand, model, device, owner.getUserName(), datePosted);
+        return String.format("%s %s %s posted by %s on the %s", brand, model, device, owner.getUserName(), createdDate);
     }
 
     @Override
@@ -136,7 +142,7 @@ public class Post {
         try{
             Post post = objectMapper.convertValue(obj, Post.class);
             return post.brand.equals(brand) && post.model.equals(model) && post.device.equals(device)
-                    && owner.getUserName().equals(post.owner.getUserName());
+                    && owner.getUserName().equals(post.owner.getUserName()) && post.price.equals(price);
         } catch(Exception e) {
             return false;
         }

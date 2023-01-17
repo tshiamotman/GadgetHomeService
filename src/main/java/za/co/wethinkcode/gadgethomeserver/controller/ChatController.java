@@ -3,6 +3,7 @@ package za.co.wethinkcode.gadgethomeserver.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import za.co.wethinkcode.gadgethomeserver.models.domain.ChatDto;
+import za.co.wethinkcode.gadgethomeserver.models.domain.DeviceTokenDto;
 import za.co.wethinkcode.gadgethomeserver.models.domain.UserDto;
 import za.co.wethinkcode.gadgethomeserver.service.ChatService;
 
@@ -25,9 +26,9 @@ public class ChatController {
     }
 
     @PostMapping("/updateDeviceId")
-    public ResponseEntity<?> updateDeviceId(@RequestBody UserDto user) {
+    public ResponseEntity<?> updateDeviceId(@RequestBody DeviceTokenDto deviceTokenDto) {
         try {
-            return ResponseEntity.ok(chatService.updateDeviceId(user));
+            return ResponseEntity.ok(chatService.updateDeviceId(deviceTokenDto));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

@@ -1,16 +1,21 @@
 package za.co.wethinkcode.gadgethomeserver.models.database;
 
+import org.springframework.data.annotation.CreatedDate;
+
 import javax.persistence.Entity;
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity(name = "chat")
 public class Chat {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "message")
     private String message;
 
+    @Column(name = "message_id")
     private String messageId;
 
     @ManyToOne
@@ -21,11 +26,20 @@ public class Chat {
     @JoinColumn(name = "recipient_id")
     private User recipient;
 
-    private Boolean messageDelivered;
+    @CreatedDate
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "create_date")
+    private Date createdDate;
 
-    private Boolean messageRead;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "delivered_date")
+    private Date messageDelivered;
 
-    @ManyToOne
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "read_date")
+    private Date messageRead;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "post_id")
     private Post post;
 
@@ -80,19 +94,27 @@ public class Chat {
         this.recipient = recipient;
     }
 
-    public Boolean getMessageDelivered() {
+    public Date getMessageDelivered() {
         return messageDelivered;
     }
 
-    public void setMessageDelivered(Boolean messageDelivered) {
+    public void setMessageDelivered(Date messageDelivered) {
         this.messageDelivered = messageDelivered;
     }
 
-    public Boolean getMessageRead() {
+    public Date getMessageRead() {
         return messageRead;
     }
 
-    public void setMessageRead(Boolean messageRead) {
+    public void setMessageRead(Date messageRead) {
         this.messageRead = messageRead;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 }

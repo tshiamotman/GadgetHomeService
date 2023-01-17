@@ -9,7 +9,7 @@ public class User {
     @Column(name = "user_name")
     private String userName;
 
-    @Column(name = "email")
+    @Column(name = "email_address")
     private String email;
 
     @Column(name = "password")
@@ -21,14 +21,14 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "number")
+    @Column(name = "phone_number")
     private String number;
 
     @Column(name = "role")
     private String role;
 
-    @Column(name = "device_id")
-    private String deviceId;
+    @OneToOne(mappedBy = "user")
+    private DeviceToken deviceToken;
 
     public User() {
     }
@@ -95,11 +95,11 @@ public class User {
         this.role = role;
     }
 
-    public String getDeviceId() {
-        return deviceId;
+    public DeviceToken getDeviceToken() {
+        return deviceToken;
     }
 
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
+    public void setDeviceToken(DeviceToken deviceId) {
+        this.deviceToken = deviceId;
     }
 }

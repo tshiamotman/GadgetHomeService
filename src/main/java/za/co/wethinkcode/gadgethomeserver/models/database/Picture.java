@@ -6,21 +6,21 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.*;
 import java.io.IOException;
 
+@Table(name = "picture")
 @Entity
 public class Picture {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String fileName;
-
-    private String fileType;
-
-    private long size;
 
     @Lob
     @Type(type = "org.hibernate.type.BinaryType")
+    @Column(name = "image")
     private byte[] image;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
@@ -29,45 +29,15 @@ public class Picture {
     public Picture(MultipartFile file, Post post) throws IOException {
         this.post = post;
         this.image = file.getBytes();
-        this.fileName = file.getOriginalFilename();
-        this.fileType = file.getContentType();
-        this.size = file.getSize();
     }
 
-    public Picture(String fileName, String fileType, long size, byte[] image, Post post) {
-        this.fileName = fileName;
-        this.fileType = fileType;
-        this.size = size;
+    public Picture(byte[] image, Post post) {
         this.image = image;
         this.post = post;
     }
 
     public Picture() {
 
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public String getFileType() {
-        return fileType;
-    }
-
-    public void setFileType(String fileType) {
-        this.fileType = fileType;
-    }
-
-    public long getSize() {
-        return size;
-    }
-
-    public void setSize(long size) {
-        this.size = size;
     }
 
     public Long getId() {
@@ -92,5 +62,13 @@ public class Picture {
 
     public void setPost(Post post) {
         this.post = post;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

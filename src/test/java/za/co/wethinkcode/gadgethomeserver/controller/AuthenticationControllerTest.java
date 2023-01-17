@@ -2,6 +2,7 @@ package za.co.wethinkcode.gadgethomeserver.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.ArgumentMatchers.any;
 
 import java.util.ArrayList;
 
@@ -55,8 +56,7 @@ public class AuthenticationControllerTest extends AbstractControllerTest {
 
         UserDto userDto = new UserDto();
 
-        BDDMockito.given(authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-            "user", "password")))
+        BDDMockito.given(authenticationManager.authenticate(any()))
             .willReturn(new TestingAuthenticationToken(user, null, new ArrayList<>()));
 
         BDDMockito.given(userDetailsService.loadUserByUsername("user")).willReturn(user);
@@ -70,7 +70,6 @@ public class AuthenticationControllerTest extends AbstractControllerTest {
 
         BDDMockito.given(token.generateToken(user)).willReturn(
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyIiwibmFtZSI6IlVzZXIgVGVzdCIsImlhdCI6MTkxNjIzOTAyMn0.EvXUbYITRaF9bFoxeEfGf2byTsDSj4fl8O1Ay9kOd1I");
-
     }
 
     @Test
@@ -79,7 +78,7 @@ public class AuthenticationControllerTest extends AbstractControllerTest {
                 .get("/auth/refresh/{refreshToken}/{username}", "1234567890", "user")
                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
-        
+
         AuthenticationResponseDto res = mapFromJson(response.getContentAsString(), AuthenticationResponseDto.class);
         
         assertEquals(HttpStatus.OK.value(), response.getStatus());
@@ -124,6 +123,5 @@ public class AuthenticationControllerTest extends AbstractControllerTest {
         assertEquals(HttpStatus.OK.value(), response.getStatus());
         assertFalse(res.getError());
         assertEquals("Account Created Successfully", res.getMessage());
-
     }
 }

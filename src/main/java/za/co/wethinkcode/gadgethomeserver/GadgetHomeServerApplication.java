@@ -18,9 +18,6 @@ import java.security.NoSuchAlgorithmException;
 @SpringBootApplication
 public class GadgetHomeServerApplication {
 
-    @Autowired
-    PropertyProvider propertyProvider;
-
     public static void main(String[] args) {
         SpringApplication.run(GadgetHomeServerApplication.class, args);
     }
@@ -35,15 +32,4 @@ public class GadgetHomeServerApplication {
         return new ModelMapper();
     }
 
-    @Bean
-    public ConnectionFactory connectionFactory(){
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setUsername(propertyProvider.getRabbitMQUser());
-        factory.setPassword(propertyProvider.getRabbitMQPassword());
-        factory.setVirtualHost(propertyProvider.getRabbitMQVirtualHost());
-        factory.setHost(propertyProvider.getRabbitMQHost());
-        factory.setPort(propertyProvider.getRabbitMQPort());
-        factory.setAutomaticRecoveryEnabled(true);
-        return factory;
-    }
 }

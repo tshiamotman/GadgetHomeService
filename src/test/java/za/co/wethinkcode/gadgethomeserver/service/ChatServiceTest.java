@@ -29,17 +29,15 @@ public class ChatServiceTest {
 
     ChatMapper chatMapper;
 
+    RabbitMqService rabbitMqService;
+
     User seller;
     User buyer;
     Post post;
 
     Chat chat;
 
-    ObjectMapper objectMapper;
-
     PropertyProvider propertyProvider;
-
-    ConnectionFactory factory;
 
     @BeforeEach
     void setup() {
@@ -48,9 +46,8 @@ public class ChatServiceTest {
         userService = mock(UserDetailsService.class);
         fcm = mock(FirebaseMessaging.class);
         chatMapper = mock(ChatMapper.class);
-        objectMapper = new ObjectMapper();
         propertyProvider = mock(PropertyProvider.class);
-        factory = mock(ConnectionFactory.class);
+        rabbitMqService = mock(RabbitMqService.class);
 
         seller = new User("seller", "password");
         buyer = new User("buyer", "password");
@@ -60,7 +57,7 @@ public class ChatServiceTest {
         chat = new Chat();
         chat.setId(1L);
 
-        service = new ChatService(repo, userService, postsService, fcm, chatMapper, objectMapper, factory);
+        service = new ChatService(repo, userService, postsService, fcm, chatMapper, rabbitMqService);
     }
 
     @Test
